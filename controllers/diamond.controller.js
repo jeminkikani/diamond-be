@@ -42,12 +42,33 @@ const addDiamond = async (req, res) => {
 
 const getAllDiamonds = async (req, res) => {
     try {
-        const diamonds = await diamondModel.find({ isDeleted: false });
-        return res.status(200).json({
-            status: "success",
-            message: "Diamonds Entry retrieved successfully.",
-            data: diamonds,
-        });
+        const diamondId = req.params.id;
+
+        if (diamondId) {
+            // Fetch specific diamond by ID
+            const diamond = await diamondModel
+                .findById(diamondId)
+                .populate("brokerName");
+            if (!diamond || diamond.isDeleted) {
+                return res.status(404).json({
+                    status: "Fail",
+                    message: "entry not found",
+                });
+            }
+            return res.status(200).json({
+                status: "success",
+                data: diamond,
+            });
+        } else {
+            const diamonds = await diamondModel
+                .find({ isDeleted: false })
+                .populate("brokerName");
+            return res.status(200).json({
+                status: "success",
+                message: "Diamonds Entry retrieved successfully.",
+                data: diamonds,
+            });
+        }
     } catch (error) {
         console.error("Error in retrieving diamonds:", error);
         return res.status(500).json({ status: "fail", message: error.message });
