@@ -10,6 +10,10 @@ const expenseSchema = {
     amount: {
         type: Number,
     },
+    is_deleted: {
+        type: Boolean,
+        default: false,
+    },
 };
 
 const expenseModel = mongoose.model("Expense", expenseSchema);
