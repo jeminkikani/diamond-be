@@ -4,6 +4,7 @@ const {
     getAllDiamonds,
     updateDiamond,
     deleteDiamond,
+    getTotalPaymentsAndBrokerage,
 } = require("../controllers/diamond.controller");
 
 const diamondRouter = express.Router();

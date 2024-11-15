@@ -1,3 +1,5 @@
+const diamondModel = require("../models/diamond.model");
+const expenseModel = require("../models/expense.model");
 const LoginModel = require("../models/login.model");
 var Token = require("../models/token.model");
 var jwt = require("jsonwebtoken");
@@ -89,6 +91,57 @@ exports.logout_page = async (req, res) => {
         res.status(500).json({
             status: "Fail",
             message: "Failed to logout",
+        });
+    }
+};
+
+
+exports.getTotalPaymentsAndBrokerage = async (req, res) => {
+    try {
+        const [diamondTotals, expenseTotals] = await Promise.all([
+            // Aggregate total payment and brokerage from diamondModel
+            diamondModel.aggregate([
+                {
+                    $match: { isDeleted: false }, // Only include non-deleted diamonds
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalPayment: { $sum: "$totalPayment" },
+                        totalBrokerage: { $sum: "$brokerage" },
+                    },
+                },
+            ]),
+            // Aggregate total expense from expenseModel
+            expenseModel.aggregate([
+                {
+                    $match: { is_deleted: false }, // Only include non-deleted expenses
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalExpense: { $sum: "$amount" },
+                    },
+                },
+            ]),
+        ]);
+
+        // Prepare response data
+        const response = {
+            totalPayment: diamondTotals[0]?.totalPayment || 0,
+            totalBrokerage: diamondTotals[0]?.totalBrokerage || 0,
+            totalExpense: expenseTotals[0]?.totalExpense || 0,
+        };
+
+        return res.status(200).json({
+            status: "Success",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error in calculating combined totals:", error);
+        res.status(500).json({
+            status: "Fail",
+            message: "Failed to calculate combined totals",
         });
     }
 };
