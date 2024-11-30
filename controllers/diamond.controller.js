@@ -72,6 +72,12 @@ const getAllDiamonds = async (req, res) => {
                 data: diamond,
             });
         } else {
+            if (!entryType) {
+                return res.status(204).json({
+                    status: "Fail",
+                    message: `Diamond entries type not found.`,
+                });
+            }
             // Fetch diamonds filtered by entryType if provided
             const filter = { isDeleted: false };
             if (entryType) {

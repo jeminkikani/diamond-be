@@ -95,31 +95,31 @@ exports.logout_page = async (req, res) => {
     }
 };
 
-
 exports.getTotalPaymentsAndBrokerage = async (req, res) => {
     try {
-        const [diamondTotals, expenseTotals] = await Promise.all([
-            // Aggregate total payment and brokerage from diamondModel
+        // Fetch diamond type-wise totals and total expenses concurrently
+        const [diamondTypeTotals, totalExpenses] = await Promise.all([
+            // Aggregate type-wise totals from diamondModel
             diamondModel.aggregate([
                 {
                     $match: { isDeleted: false }, // Only include non-deleted diamonds
                 },
                 {
                     $group: {
-                        _id: null,
+                        _id: "$entryType", // Group by entry type (incoming/outgoing)
                         totalPayment: { $sum: "$totalPayment" },
                         totalBrokerage: { $sum: "$brokerage" },
                     },
                 },
             ]),
-            // Aggregate total expense from expenseModel
+            // Aggregate total expenses from expenseModel
             expenseModel.aggregate([
                 {
                     $match: { is_deleted: false }, // Only include non-deleted expenses
                 },
                 {
                     $group: {
-                        _id: null,
+                        _id: null, // Combine all expenses
                         totalExpense: { $sum: "$amount" },
                     },
                 },
@@ -128,9 +128,12 @@ exports.getTotalPaymentsAndBrokerage = async (req, res) => {
 
         // Prepare response data
         const response = {
-            totalPayment: diamondTotals[0]?.totalPayment || 0,
-            totalBrokerage: diamondTotals[0]?.totalBrokerage || 0,
-            totalExpense: expenseTotals[0]?.totalExpense || 0,
+            diamonds: diamondTypeTotals.map((item) => ({
+                type: item._id,
+                totalPayment: item.totalPayment,
+                totalBrokerage: item.totalBrokerage,
+            })),
+            totalExpense: totalExpenses[0]?.totalExpense || 0, // Total of all expenses
         };
 
         return res.status(200).json({
@@ -138,10 +141,10 @@ exports.getTotalPaymentsAndBrokerage = async (req, res) => {
             data: response,
         });
     } catch (error) {
-        console.error("Error in calculating combined totals:", error);
+        console.error("Error in calculating totals:", error);
         res.status(500).json({
             status: "Fail",
-            message: "Failed to calculate combined totals",
+            message: "Failed to calculate totals",
         });
     }
 };
