@@ -14,7 +14,16 @@ const addDiamond = async (req, res) => {
             percentage,
             brokerage,
             amountAfterBrokerage,
+            entryType, // Include entryType
         } = req.body;
+
+        // Validate entryType
+        if (!["incoming", "outgoing"].includes(entryType)) {
+            return res
+                .status(400)
+                .json({ status: "fail", message: "Invalid entryType value." });
+        }
+
         const newDiamond = new diamondModel({
             date,
             weight,
@@ -27,11 +36,13 @@ const addDiamond = async (req, res) => {
             percentage,
             brokerage,
             amountAfterBrokerage,
+            entryType, // Save entryType
         });
+
         const savedDiamond = await newDiamond.save();
         return res.status(201).json({
             status: "success",
-            message: "Diamond Entry added successfully.",
+            message: "Diamond entry added successfully.",
             data: savedDiamond,
         });
     } catch (error) {
@@ -42,17 +53,18 @@ const addDiamond = async (req, res) => {
 
 const getAllDiamonds = async (req, res) => {
     try {
-        const diamondId = req.params.id;
+        const { id } = req.params;
+        const { entryType } = req.body; // Get entryType from query
 
-        if (diamondId) {
+        if (id) {
             // Fetch specific diamond by ID
             const diamond = await diamondModel
-                .findById(diamondId)
+                .findById(id)
                 .populate("brokerName");
             if (!diamond || diamond.isDeleted) {
                 return res.status(404).json({
                     status: "Fail",
-                    message: "entry not found",
+                    message: "Entry not found",
                 });
             }
             return res.status(200).json({
@@ -60,12 +72,18 @@ const getAllDiamonds = async (req, res) => {
                 data: diamond,
             });
         } else {
+            // Fetch diamonds filtered by entryType if provided
+            const filter = { isDeleted: false };
+            if (entryType) {
+                filter.entryType = entryType;
+            }
             const diamonds = await diamondModel
-                .find({ isDeleted: false })
+                .find(filter)
                 .populate("brokerName");
+
             return res.status(200).json({
                 status: "success",
-                message: "Diamonds Entry retrieved successfully.",
+                message: `Diamond entries ${diamonds.length} retrieved successfully.`,
                 data: diamonds,
             });
         }
@@ -78,21 +96,29 @@ const getAllDiamonds = async (req, res) => {
 const updateDiamond = async (req, res) => {
     try {
         const { id } = req.params;
+        const { entryType } = req.body;
+
+        if (entryType && !["incoming", "outgoing"].includes(entryType)) {
+            return res
+                .status(400)
+                .json({ status: "fail", message: "Invalid entryType value." });
+        }
+
         const updatedDiamond = await diamondModel.findByIdAndUpdate(
             id,
             req.body,
-            {
-                new: true,
-            }
+            { new: true }
         );
+
         if (!updatedDiamond) {
             return res
                 .status(404)
-                .json({ status: "fail", message: "Diamond Entry not found." });
+                .json({ status: "fail", message: "Diamond entry not found." });
         }
+
         return res.status(200).json({
             status: "success",
-            message: "Diamond Entry updated successfully.",
+            message: "Diamond entry updated successfully.",
             data: updatedDiamond,
         });
     } catch (error) {
@@ -125,3 +151,5 @@ const deleteDiamond = async (req, res) => {
 };
 
 module.exports = { addDiamond, getAllDiamonds, updateDiamond, deleteDiamond };
+
+// db.getCollection("books").updateMany({ $set: { "entryType":"incoming"} })
