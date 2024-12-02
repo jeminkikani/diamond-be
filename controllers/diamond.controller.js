@@ -54,7 +54,7 @@ const addDiamond = async (req, res) => {
 const getAllDiamonds = async (req, res) => {
     try {
         const { id } = req.params;
-        const { entryType } = req.body; // Get entryType from query
+        const { entryType } = req.query; // Get entryType from query
 
         if (id) {
             // Fetch specific diamond by ID

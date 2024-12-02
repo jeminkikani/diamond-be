@@ -22,10 +22,10 @@ exports.login_page = async function (req, res) {
             id: loginIdFind._doc._id,
             isActive: true,
         });
-        console.log(tokenFind);
+        // console.log(tokenFind);
 
         if (loginIdFind.password !== password) {
-            console.log("password", password);
+            // console.log("password", password);
             return res.status(404).json({
                 status: "Fail",
                 message: "Enter valid password",
