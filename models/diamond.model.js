@@ -6,6 +6,9 @@ const diamondSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     totalPayment: { type: Number, required: true },
     partyName: { type: String, required: true },
+    days: { type: String },
+    diamondPayment: { type: Number, required: true },
+    diamondPaymentPercentage: { type: Number, required: true },
     brokerName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "broker",
@@ -18,9 +21,6 @@ const diamondSchema = new mongoose.Schema({
     entryType: { type: String, enum: ["incoming", "outgoing"], required: true },
     isDeleted: { type: Boolean, default: false },
 });
-
-
-
 
 const diamondModel = mongoose.model("diamond", diamondSchema);
 

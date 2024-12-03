@@ -7,14 +7,17 @@ const addDiamond = async (req, res) => {
             weight,
             diamondType,
             price,
-            totalPayment,
             partyName,
             brokerName,
             paymentDate,
             percentage,
             brokerage,
             amountAfterBrokerage,
-            entryType, // Include entryType
+            totalPayment,
+            days,
+            diamondPayment,
+            diamondPaymentPercentage,
+            entryType,
         } = req.body;
 
         // Validate entryType
@@ -36,6 +39,9 @@ const addDiamond = async (req, res) => {
             percentage,
             brokerage,
             amountAfterBrokerage,
+            days,
+            diamondPayment,
+            diamondPaymentPercentage,
             entryType, // Save entryType
         });
 
