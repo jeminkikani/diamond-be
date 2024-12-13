@@ -127,12 +127,35 @@ exports.getTotalPaymentsAndBrokerage = async (req, res) => {
         ]);
 
         // Prepare response data
+        // const response = {
+        //     diamonds: diamondTypeTotals.map((item) => ({
+        //         type: item._id,
+        //         totalPayment: item.totalPayment,
+        //         totalBrokerage: item.totalBrokerage,
+        //     })),
+        //     totalExpense: totalExpenses[0]?.totalExpense || 0, // Total of all expenses
+        // };
+
+
+        const diamondOrder = ["incoming", "outgoing"];
+        const diamonds = diamondOrder.map((type) => {
+            const diamond = diamondTypeTotals.find(
+                (item) => item._id === type
+            ) || {
+                _id: type,
+                totalPayment: 0,
+                totalBrokerage: 0,
+            };
+            return {
+                type: diamond._id,
+                totalPayment: diamond.totalPayment,
+                totalBrokerage: diamond.totalBrokerage,
+            };
+        });
+
+        // Prepare response data
         const response = {
-            diamonds: diamondTypeTotals.map((item) => ({
-                type: item._id,
-                totalPayment: item.totalPayment,
-                totalBrokerage: item.totalBrokerage,
-            })),
+            diamonds,
             totalExpense: totalExpenses[0]?.totalExpense || 0, // Total of all expenses
         };
 
