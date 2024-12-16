@@ -12,7 +12,6 @@ const diamondSchema = new mongoose.Schema({
     brokerName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "broker",
-        required: true,
     },
     paymentDate: { type: Date, required: true },
     // percentage: { type: Number, required: true },
