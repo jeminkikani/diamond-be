@@ -143,20 +143,20 @@ exports.getTotalPaymentsAndBrokerage = async (req, res) => {
                 (item) => item._id === type
             ) || {
                 _id: type,
-                totalPayment: 0,
+                amountAfterBrokerage: 0,
                 totalBrokerage: 0,
             };
             return {
                 type: diamond._id,
-                totalPayment: diamond.totalPayment,
+                amountAfterBrokerage: diamond.amountAfterBrokerage,
                 totalBrokerage: diamond.totalBrokerage,
-            };
+            };  
         });
 
         // Prepare response data
         const response = {
             diamonds,
-            totalExpense: totalExpenses[0]?.totalExpense || 0, // Total of all expenses
+            totalExpense: totalExpenses[0]?.amountAfterBrokerage || 0, // Total of all expenses
         };
 
         return res.status(200).json({
