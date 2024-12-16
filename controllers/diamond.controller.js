@@ -35,7 +35,7 @@ const addDiamond = async (req, res) => {
             partyName,
             brokerName: brokerName || null,
             paymentDate,
-            brokerage,
+            brokerage: brokerage || null,
             amountAfterBrokerage,
             days,
             diamondPayment,
