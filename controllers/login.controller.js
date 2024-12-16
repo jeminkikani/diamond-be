@@ -107,7 +107,7 @@ exports.getTotalPaymentsAndBrokerage = async (req, res) => {
                 {
                     $group: {
                         _id: "$entryType", // Group by entry type (incoming/outgoing)
-                        totalPayment: { $sum: "$totalPayment" },
+                        amountAfterBrokerage: { $sum: "$amountAfterBrokerage" },
                         totalBrokerage: { $sum: "$brokerage" },
                     },
                 },
