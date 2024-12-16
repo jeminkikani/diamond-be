@@ -15,7 +15,7 @@ const diamondSchema = new mongoose.Schema({
     },
     paymentDate: { type: Date, required: true },
     // percentage: { type: Number, required: true },
-    brokerage: { type: Number, required: true },
+    brokerage: { type: Number },
     amountAfterBrokerage: { type: Number, required: true },
     entryType: { type: String, enum: ["incoming", "outgoing"], required: true },
     isDeleted: { type: Boolean, default: false },
