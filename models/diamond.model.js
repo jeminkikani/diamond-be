@@ -13,7 +13,6 @@ const diamondSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "broker",
     },
-    paymentDate: { type: Date, required: true },
     // percentage: { type: Number, required: true },
     brokerage: { type: Number },
     amountAfterBrokerage: { type: Number, required: true },
