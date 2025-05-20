@@ -46,7 +46,7 @@ const getExpenses = async (req, res) => {
             });
         } else {
             // Fetch all expenses
-            const expenses = await expenseModel.find({ is_deleted: false });
+            const expenses = await expenseModel.find({ is_deleted: false }).sort({ date: -1 });
             return res.status(200).json({
                 status: "success",
                 message: "expenses get successfully",

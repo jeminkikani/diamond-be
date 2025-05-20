@@ -45,7 +45,7 @@ const getBrokers = async (req, res) => {
             });
         } else {
             // Fetch all brokers
-            const brokers = await brokerModel.find({ is_deleted: false });
+            const brokers = await brokerModel.find({ is_deleted: false }).sort({ date: -1 });
             return res.status(200).json({
                 status: "success",
                 message: "brokers get successfully",

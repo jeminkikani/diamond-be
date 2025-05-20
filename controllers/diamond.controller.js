@@ -87,7 +87,8 @@ const getAllDiamonds = async (req, res) => {
             }
             const diamonds = await diamondModel
                 .find(filter)
-                .populate("brokerName");
+                .populate("brokerName")
+                .sort({ date: -1 });
 
             return res.status(200).json({
                 status: "success",
